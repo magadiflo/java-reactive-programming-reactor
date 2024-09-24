@@ -3,6 +3,8 @@ package dev.magadiflo.app.common;
 import com.github.javafaker.Faker;
 import org.reactivestreams.Subscriber;
 
+import java.time.Duration;
+
 public class Util {
 
     private static final Faker faker = Faker.instance();
@@ -17,5 +19,13 @@ public class Util {
 
     public static Faker faker() {
         return faker;
+    }
+
+    public static void sleepSeconds(long seconds) {
+        try {
+            Thread.sleep(Duration.ofSeconds(seconds));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
