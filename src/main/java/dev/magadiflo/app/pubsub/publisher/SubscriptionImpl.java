@@ -1,4 +1,4 @@
-package dev.magadiflo.app.publisher;
+package dev.magadiflo.app.pubsub.publisher;
 
 import com.github.javafaker.Faker;
 import org.reactivestreams.Subscriber;
@@ -32,6 +32,12 @@ public class SubscriptionImpl implements Subscription {
     public void request(long requested) {
         if (this.isCanceled) return;
         log.info("Es subscriber ha solicitado {} items", requested);
+
+        if (requested > MAX_ITEMS) {
+            this.subscriber.onError(new RuntimeException("Falló la validación"));
+            this.isCanceled = true;
+            return;
+        }
         int i = 0;
         while (i < requested && this.count < MAX_ITEMS) {
             this.count++;
