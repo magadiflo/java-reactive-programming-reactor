@@ -21,6 +21,35 @@ public class Lec04FluxCreateDownStreamDemand {
     private static final Logger log = LoggerFactory.getLogger(Lec04FluxCreateDownStreamDemand.class);
 
     public static void main(String[] args) {
+        produceOnDemand();
+//        produceEarly();
+    }
+
+    // Genera los valores, solo si se le solicita
+    private static void produceOnDemand() {
+        SubscriberImpl subscriber = new SubscriberImpl();
+
+        Flux<String> fluxCreate = Flux.create(fluxSink -> {
+            fluxSink.onRequest(value -> {
+                for (int i = 0; i < value && !fluxSink.isCancelled(); i++) {
+                    String name = Util.faker().name().firstName();
+                    log.info("[onDemand] Generado: {}", name);
+                    fluxSink.next(name);
+                }
+            });
+        });
+
+        fluxCreate.subscribe(subscriber);
+        subscriber.getSubscription().request(2);
+        subscriber.getSubscription().request(2);
+        subscriber.getSubscription().cancel();
+        // Aquí ya no recibirá elementos, dado que fue cancelado en la lína anterior
+        subscriber.getSubscription().request(2);
+    }
+
+    // Genera los valores temprano, sin que alguien le haya solicitado, símplemente
+    // genera los valores y los almacena en una cola
+    private static void produceEarly() {
         SubscriberImpl subscriber = new SubscriberImpl();
 
         Flux<String> fluxCreate = Flux.create(fluxSink -> {
@@ -34,6 +63,7 @@ public class Lec04FluxCreateDownStreamDemand {
 
         fluxCreate.subscribe(subscriber);
 
+        // Pasado 2 segundos, se le solicita 2 valores que ya tiene almacenado
         Util.sleepSeconds(2);
         subscriber.getSubscription().request(2);
     }
