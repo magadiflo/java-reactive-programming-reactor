@@ -11,7 +11,7 @@ public class Lec06ErrorHandling {
     private static final Logger log = LoggerFactory.getLogger(Lec06ErrorHandling.class);
 
     public static void main(String[] args) {
-        onErrorResume3();
+        onErrorComplete1();
     }
 
     private static void onErrorReturn1() {
@@ -28,19 +28,6 @@ public class Lec06ErrorHandling {
                 .onErrorReturn(ArithmeticException.class, -2)
                 .onErrorReturn(-3)
                 .subscribe(Util.subscriber());
-    }
-
-    // Imaginemos que es un servicio alternativo
-    private static Mono<Integer> fallback1() {
-        return Mono.fromSupplier(() -> Util.faker().random().nextInt(10, 100));
-    }
-
-    private static Flux<Integer> fallback2() {
-        return Flux.range(50, 5);
-    }
-
-    private static Flux<Integer> fallback3() {
-        return Flux.error(new IllegalArgumentException("Ocurrió un error"));
     }
 
     private static void onErrorResume1() {
@@ -63,5 +50,24 @@ public class Lec06ErrorHandling {
                 .onErrorResume(throwable -> fallback3())
                 .onErrorReturn(-5)
                 .subscribe(Util.subscriber());
+    }
+
+    private static void onErrorComplete1() {
+        Mono.error(new RuntimeException("Oops"))
+                .onErrorComplete()
+                .subscribe(Util.subscriber());
+    }
+
+    // Imaginemos que es un servicio alternativo
+    private static Mono<Integer> fallback1() {
+        return Mono.fromSupplier(() -> Util.faker().random().nextInt(10, 100));
+    }
+
+    private static Flux<Integer> fallback2() {
+        return Flux.range(50, 5);
+    }
+
+    private static Flux<Integer> fallback3() {
+        return Flux.error(new IllegalArgumentException("Ocurrió un error"));
     }
 }
