@@ -11,7 +11,7 @@ public class Lec06ErrorHandling {
     private static final Logger log = LoggerFactory.getLogger(Lec06ErrorHandling.class);
 
     public static void main(String[] args) {
-        onErrorComplete1();
+        onErrorContinue();
     }
 
     private static void onErrorReturn1() {
@@ -55,6 +55,16 @@ public class Lec06ErrorHandling {
     private static void onErrorComplete1() {
         Mono.error(new RuntimeException("Oops"))
                 .onErrorComplete()
+                .subscribe(Util.subscriber());
+    }
+
+    private static void onErrorContinue() {
+        Flux.range(1, 10)
+                .map(number -> number == 5 ? 5 / 0 : number) //intencional
+                .onErrorContinue((throwable, o) -> {
+                    log.error("Error:", throwable);
+                    log.error("Elemento que causó el problema: {}", o);
+                })
                 .subscribe(Util.subscriber());
     }
 
