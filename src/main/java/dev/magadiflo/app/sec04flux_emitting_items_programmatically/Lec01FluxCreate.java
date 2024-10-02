@@ -17,6 +17,8 @@ public class Lec01FluxCreate {
             } while (!country.equalsIgnoreCase("Peru"));
             fluxSink.complete();
         });
-        nameFlux.subscribe(Util.subscriber());
+
+        nameFlux.subscribe(Util.subscriber("A"));
+        nameFlux.subscribe(Util.subscriber("B"));
     }
 }

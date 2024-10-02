@@ -8,7 +8,8 @@ public class Lec02FluxCreateRefactor {
     public static void main(String[] args) {
         NameGenerator nameGenerator = new NameGenerator();
         Flux<String> stringFlux = Flux.create(nameGenerator);
-        stringFlux.subscribe(Util.subscriber());
+        stringFlux.subscribe(Util.subscriber("A"));
+        stringFlux.subscribe(Util.subscriber("B"));
 
         for (int i = 0; i < 10; i++) {
             nameGenerator.generate();
